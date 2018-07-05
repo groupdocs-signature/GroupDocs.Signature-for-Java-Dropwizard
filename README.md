@@ -1,4 +1,3 @@
-![Alt text](https://raw.githubusercontent.com/groupdocs-Signature/GroupDocs.Signature-for-Java-Dropwizard/master/src/main/resources/assets/images/banner.png "GroupDocs.Signature")
 # GroupDocs.Signature for Java Dropwizard Example
 ###### version 1.0.0
 
