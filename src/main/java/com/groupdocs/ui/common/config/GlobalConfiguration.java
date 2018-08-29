@@ -1,10 +1,7 @@
 package com.groupdocs.ui.common.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.groupdocs.ui.common.config.ApplicationConfiguration;
-import com.groupdocs.ui.common.config.ServerConfiguration;
 import com.groupdocs.ui.signature.config.SignatureConfiguration;
-import com.groupdocs.ui.viewer.config.ViewerConfiguration;
 import io.dropwizard.Configuration;
 
 import javax.validation.Valid;
@@ -27,7 +24,7 @@ public class GlobalConfiguration extends Configuration{
 
     @Valid
     @JsonProperty
-    private ViewerConfiguration viewer;
+    private CommonConfiguration common;
 
     @Valid
     @JsonProperty
@@ -39,7 +36,7 @@ public class GlobalConfiguration extends Configuration{
     public GlobalConfiguration(){
         server = new ServerConfiguration();
         application = new ApplicationConfiguration();
-        viewer = new ViewerConfiguration();
+        common = new CommonConfiguration();
         signature = new SignatureConfiguration();
     }
 
@@ -60,11 +57,11 @@ public class GlobalConfiguration extends Configuration{
     }
 
     /**
-     * Get viewer configuration
-     * @return viewer configuration
+     * Get signature configuration
+     * @return signature configuration
      */
-    public ViewerConfiguration getViewer() {
-        return viewer;
+    public CommonConfiguration getCommon() {
+        return common;
     }
 
     /**
