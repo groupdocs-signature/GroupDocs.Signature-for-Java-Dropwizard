@@ -62,7 +62,7 @@ signature:
   preloadPageCount: 0
   # Data directory path
   # Absolute path to signature cache files directory
-  dataDirectory: ''
+  dataDirectory: 'C:/GroupDocs/Documents/'
   # Enable/disable text signature
   textSignature: true
   # Enable/disable image signature
