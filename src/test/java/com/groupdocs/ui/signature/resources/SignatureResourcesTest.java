@@ -4,6 +4,7 @@ import com.groupdocs.ui.common.MainService;
 import com.groupdocs.ui.common.config.GlobalConfiguration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.glassfish.jersey.client.ClientProperties;
 import org.junit.ClassRule;
 import org.junit.Test;
 import javax.ws.rs.client.Client;
@@ -20,6 +21,8 @@ public class SignatureResourcesTest {
     @Test
     public void getView() {
         Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+        client.property(ClientProperties.CONNECT_TIMEOUT, 5000);
+        client.property(ClientProperties.READ_TIMEOUT,    5000);
         Response response = client.target(
                 String.format("http://localhost:%d/signature", RULE.getLocalPort()))
                 .request()
