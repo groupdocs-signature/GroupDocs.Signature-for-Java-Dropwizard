@@ -1,5 +1,5 @@
 # GroupDocs.Signature for Java Dropwizard Example
-###### version 1.9.0
+###### version 1.10.0
 
 [![Build Status](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard.svg?branch=master)](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1fe7f997911527bd80c6/maintainability)](https://codeclimate.com/github/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/maintainability)
