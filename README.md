@@ -49,15 +49,45 @@ https://www.youtube.com/watch?v=pA98PkdXcN8
 - Cross-platform support (Windows, Linux, MacOS)
 
 
-## How to run
-1. Download/Clone GroupDocs.Signature for Java Dropwizard Example.
-2. Extract/Copy GroupDocs.Signature for Java Dropwizard Example to working directory.
-3. Navigate to GroupDocs.Signature for Java Dropwizard Example root directory.
-4. Update params in `configuration.yml` to meet your requirements.
-5. Open console and type `cd 'GroupDocs.Signature for Java Dropwizard Example root directory'`, press enter.
-6. In console type following command `mvn clean compile exec:java`, press enter.
-7. Go to `http://localhost:{PORT}/signature/`.
-PORT - port number specified in `configuration.yml` (by default http://localhost:8080/signature/).
+# How to run
+
+For all methods below you can adjust settings in `configuration.yml`. By default in this sample will lookup for license file in `./Licenses` folder, so you can simply put your license file in that folder or specify relative/absolute path by setting `licensePath` value in `configuration.yml`. 
+
+
+## Build from source
+
+Download [source code](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/archive/master.zip) from github or clone this repository.
+
+```bash
+git clone https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard
+cd GroupDocs.Signature-for-Java-Dropwizard
+mvn clean compile exec:java
+## Open http://localhost:8080/signature/ in your favorite browser.
+```
+
+## Binary release (with all dependencies)
+
+Download [latest release](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/releases/latest) from [releases page](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/releases). 
+
+**Note**: This method is **recommended** for running this sample behind firewall.
+
+```bash
+curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/releases/download/1.10.0/release.tar.gz
+tar -xvzf release.tar.gz
+cd release
+java -jar annotation-1.10.0.jar configuration.yaml
+## Open http://localhost:8080/signature/ in your favorite browser.
+```
+
+## Docker image
+Use [docker](https://www.docker.com/) image.
+
+```bash
+mkdir DocumentSamples
+mkdir Licenses
+docker run -p 8080:8080 -v `pwd`/DocumentSamples:/home/groupdocs/app/DocumentSamples -v `pwd`/Licenses:/home/groupdocs/app/Licenses groupdocs/signature-for-java-dropwizard
+## Open http://localhost:8080/signature/ in your favorite browser.
+```
 
 
 ## Resources
