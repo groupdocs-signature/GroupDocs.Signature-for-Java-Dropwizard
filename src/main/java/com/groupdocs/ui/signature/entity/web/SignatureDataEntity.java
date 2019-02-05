@@ -6,6 +6,7 @@ package com.groupdocs.ui.signature.entity.web;
  * @author Aspose Pty Ltd
  */
 public class SignatureDataEntity {
+    private int id;
     private String reason;
     private String  contact;
     private String  address;
@@ -149,5 +150,13 @@ public class SignatureDataEntity {
 
     public void setDeleted(Boolean deleted) {
         this.deleted = deleted;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

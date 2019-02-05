@@ -13,16 +13,16 @@ import com.groupdocs.ui.signature.entity.web.SignatureDataEntity;
  * @author Aspose Pty Ltd
  */
 public class BarCodeSigner extends Signer{
-    private OpticalXmlEntity qrCodeData;
+    private OpticalXmlEntity barCodeData;
 
     /**
      * Constructor
-     * @param qrCodeData OpticalXmlEntity
+     * @param barCodeData OpticalXmlEntity
      * @param signatureData SignatureDataEntity
      */
-    public BarCodeSigner(OpticalXmlEntity qrCodeData, SignatureDataEntity signatureData){
+    public BarCodeSigner(OpticalXmlEntity barCodeData, SignatureDataEntity signatureData){
         super(signatureData);
-        this.qrCodeData = qrCodeData;
+        this.barCodeData = barCodeData;
     }
 
     /**
@@ -32,27 +32,10 @@ public class BarCodeSigner extends Signer{
     @Override
     public PdfBarcodeSignOptions signPdf(){
         // setup options
-        PdfBarcodeSignOptions signOptions = new PdfBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        PdfBarcodeSignOptions signOptions = new PdfBarcodeSignOptions(barCodeData.getText());
+        fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
         return signOptions;
-    }
-
-    private void fillBorders(BarcodeSignOptions signOptions) {
-        if(qrCodeData.getBorderWidth() != 0){
-            signOptions.setBorderVisiblity(true);
-            signOptions.setBorderColor(getColor(qrCodeData.getBorderColor()));
-            signOptions.setBorderWeight(qrCodeData.getBorderWidth());
-            signOptions.setBorderDashStyle(qrCodeData.getBorderStyle());
-        }
     }
 
     /**
@@ -62,7 +45,12 @@ public class BarCodeSigner extends Signer{
     @Override
     public ImagesBarcodeSignOptions signImage(){
         // setup options
-        ImagesBarcodeSignOptions signOptions = new ImagesBarcodeSignOptions(qrCodeData.getText());
+        ImagesBarcodeSignOptions signOptions = new ImagesBarcodeSignOptions(barCodeData.getText());
+        fillProperties(signOptions);
+        return signOptions;
+    }
+
+    private void fillProperties(BarcodeSignOptions signOptions) {
         signOptions.setEncodeType(BarcodeTypes.Code39Standard);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
@@ -73,8 +61,6 @@ public class BarCodeSigner extends Signer{
         if(signatureData.getAngle() != 0) {
             signOptions.setRotationAngle(signatureData.getAngle());
         }
-        fillBorders(signOptions);
-        return signOptions;
     }
 
     /**
@@ -84,17 +70,9 @@ public class BarCodeSigner extends Signer{
     @Override
     public WordsBarcodeSignOptions signWord(){
         // setup options
-        WordsBarcodeSignOptions signOptions = new WordsBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        WordsBarcodeSignOptions signOptions = new WordsBarcodeSignOptions(barCodeData.getText());
+        fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
         return signOptions;
     }
 
@@ -105,17 +83,9 @@ public class BarCodeSigner extends Signer{
     @Override
     public CellsBarcodeSignOptions signCells(){
         // setup options
-        CellsBarcodeSignOptions signOptions = new CellsBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        CellsBarcodeSignOptions signOptions = new CellsBarcodeSignOptions(barCodeData.getText());
+        fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
         return signOptions;
     }
 
@@ -126,17 +96,10 @@ public class BarCodeSigner extends Signer{
     @Override
     public SlidesBarcodeSignOptions signSlides(){
         // setup options
-        SlidesBarcodeSignOptions signOptions = new SlidesBarcodeSignOptions(qrCodeData.getText());
-        signOptions.setEncodeType(BarcodeTypes.Code39Standard);
-        signOptions.setHorizontalAlignment(HorizontalAlignment.None);
-        signOptions.setVerticalAlignment(VerticalAlignment.None);
-        signOptions.setWidth(signatureData.getImageWidth());
-        signOptions.setHeight(signatureData.getImageHeight());
-        signOptions.setTop(signatureData.getTop());
-        signOptions.setLeft(signatureData.getLeft());
+        SlidesBarcodeSignOptions signOptions = new SlidesBarcodeSignOptions(barCodeData.getText());
+        fillProperties(signOptions);
         signOptions.setDocumentPageNumber(signatureData.getPageNumber());
-        signOptions.setRotationAngle(signatureData.getAngle());
-        fillBorders(signOptions);
         return signOptions;
     }
+
 }
