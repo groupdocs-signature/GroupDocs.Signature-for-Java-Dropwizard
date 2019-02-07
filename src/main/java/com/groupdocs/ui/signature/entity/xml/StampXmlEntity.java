@@ -24,9 +24,9 @@ public class StampXmlEntity extends XmlEntity {
     private int fontSize;
     private int textRepeat;
     private int strokeWidth;
-    private Boolean bold;
-    private Boolean italic;
-    private Boolean underline;
+    private boolean bold;
+    private boolean italic;
+    private boolean underline;
 
     public String getTextExpansion() {
         return textExpansion;
@@ -100,27 +100,27 @@ public class StampXmlEntity extends XmlEntity {
         this.strokeWidth = strokeWidth;
     }
 
-    public Boolean getBold() {
+    public boolean getBold() {
         return bold;
     }
 
-    public void setBold(Boolean bold) {
+    public void setBold(boolean bold) {
         this.bold = bold;
     }
 
-    public Boolean getItalic() {
+    public boolean getItalic() {
         return italic;
     }
 
-    public void setItalic(Boolean italic) {
+    public void setItalic(boolean italic) {
         this.italic = italic;
     }
 
-    public Boolean getUnderline() {
+    public boolean getUnderline() {
         return underline;
     }
 
-    public void setUnderline(Boolean underline) {
+    public void setUnderline(boolean underline) {
         this.underline = underline;
     }
 

@@ -144,7 +144,7 @@ public class StampSigner extends Signer {
                 line.setHeight(height);
                 fillTextAndFont(stampXmlEntity, text, reductionSize, line);
                 line.setTextBottomIntent((height / 2));
-                line.setTextRepeatType(StampTextRepeatType.RepeatWithTruncation);
+                line.setTextRepeatType(StampTextRepeatType.None);
                 outerLines.add(line);
             }
         }
