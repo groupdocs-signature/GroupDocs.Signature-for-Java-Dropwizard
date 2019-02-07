@@ -3,6 +3,8 @@ package com.groupdocs.ui.signature.service;
 import com.google.common.collect.Lists;
 import com.groupdocs.signature.config.SignatureConfig;
 import com.groupdocs.signature.domain.DocumentDescription;
+import com.groupdocs.signature.domain.enums.HorizontalAlignment;
+import com.groupdocs.signature.domain.enums.VerticalAlignment;
 import com.groupdocs.signature.handler.SignatureHandler;
 import com.groupdocs.signature.licensing.License;
 import com.groupdocs.signature.options.OutputType;
@@ -17,7 +19,6 @@ import com.groupdocs.ui.common.entity.web.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.common.entity.web.request.LoadDocumentRequest;
 import com.groupdocs.ui.common.exception.TotalGroupDocsException;
 import com.groupdocs.ui.signature.config.SignatureConfiguration;
-import com.groupdocs.ui.signature.util.directory.SignatureDirectory;
 import com.groupdocs.ui.signature.entity.request.*;
 import com.groupdocs.ui.signature.entity.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.entity.web.SignatureFileDescriptionEntity;
@@ -27,6 +28,7 @@ import com.groupdocs.ui.signature.entity.xml.*;
 import com.groupdocs.ui.signature.signatureloader.SignatureLoader;
 import com.groupdocs.ui.signature.signer.*;
 import com.groupdocs.ui.signature.util.XMLReaderWriter;
+import com.groupdocs.ui.signature.util.directory.SignatureDirectory;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,10 +48,11 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 
-import static com.groupdocs.ui.common.util.Utils.getFreeFileName;
-import static com.groupdocs.ui.signature.util.directory.SignatureDirectory.*;
-import static com.groupdocs.ui.signature.util.directory.PathConstants.*;
+import static com.groupdocs.ui.common.util.Utils.getFile;
 import static com.groupdocs.ui.signature.util.SignatureType.*;
+import static com.groupdocs.ui.signature.util.directory.PathConstants.DATA_FOLDER;
+import static com.groupdocs.ui.signature.util.directory.PathConstants.OUTPUT_FOLDER;
+import static com.groupdocs.ui.signature.util.directory.SignatureDirectory.*;
 
 public class SignatureServiceImpl implements SignatureService {
 
@@ -63,6 +66,8 @@ public class SignatureServiceImpl implements SignatureService {
     private GlobalConfiguration globalConfiguration;
 
     private SignatureConfiguration signatureConfiguration;
+
+    private SignatureLoader signatureLoader = new SignatureLoader();
 
     /**
      * Initializing fields after creating configuration objects
@@ -137,28 +142,28 @@ public class SignatureServiceImpl implements SignatureService {
             } else {
                 relDirPath = String.format("%s%s%s", rootDirectory, File.separator, relDirPath);
             }
-            SignatureLoader signatureLoader = new SignatureLoader(relDirPath, signatureType);
             List<SignatureFileDescriptionEntity> fileList;
             switch (signatureType) {
                 case DIGITAL:
-                    fileList = signatureLoader.loadFiles();
+                    fileList = signatureLoader.loadFiles(relDirPath, signatureType);
                     break;
                 case IMAGE:
                 case HAND:
-                    fileList = signatureLoader.loadImageSignatures();
+                    fileList = signatureLoader.loadImageSignatures(relDirPath);
                     break;
                 case STAMP:
                 case QR_CODE:
                 case BAR_CODE:
                 case TEXT:
-                    fileList = signatureLoader.loadSignatures();
+                    fileList = signatureLoader.loadSignatures(relDirPath, signatureType);
                     break;
                 default:
-                    fileList = signatureLoader.loadFiles();
+                    fileList = signatureLoader.loadFiles(relDirPath, signatureType);
                     break;
             }
             return fileList;
         } catch (Exception ex) {
+            logger.error("Exception occurred while getting file list", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
@@ -188,6 +193,7 @@ public class SignatureServiceImpl implements SignatureService {
             // return document description
             return loadDocumentEntity;
         } catch (Exception ex) {
+            logger.error("Exception occurred while loading document description", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
@@ -207,6 +213,7 @@ public class SignatureServiceImpl implements SignatureService {
             // return loaded page object
             return pageDescriptionEntity;
         } catch (Exception ex) {
+            logger.error("Exception occurred while loading document page", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
     }
@@ -223,17 +230,18 @@ public class SignatureServiceImpl implements SignatureService {
             String encodedImage = saveStampRequest.getImage().replace("data:image/png;base64,", "");
             List<StampXmlEntity> stampData = saveStampRequest.getStampData();
 
-            FileDescriptionEntity savedImage = new FileDescriptionEntity();
-            File file = getFile(previewPath, null);
+            File file = getFile(previewPath, "");
             byte[] decodedImg = Base64.getDecoder().decode(encodedImage.getBytes(StandardCharsets.UTF_8));
             Files.write(file.toPath(), decodedImg);
-            savedImage.setGuid(file.toPath().toString());
             // stamp data to xml file saving
             StampXmlEntityList stampXmlEntityList = new StampXmlEntityList();
             stampXmlEntityList.setStampXmlEntityList(stampData);
             String xmlFileName = FilenameUtils.removeExtension(file.getName());
             String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, xmlFileName);
             new XMLReaderWriter<StampXmlEntityList>().write(fileName, stampXmlEntityList);
+
+            FileDescriptionEntity savedImage = new FileDescriptionEntity();
+            savedImage.setGuid(file.toPath().toString());
             // return loaded page object
             return savedImage;
         } catch (Exception ex) {
@@ -250,7 +258,7 @@ public class SignatureServiceImpl implements SignatureService {
         OpticalXmlEntity signatureData = saveOpticalCodeRequest.getProperties();
         String signatureType = saveOpticalCodeRequest.getSignatureType();
         // initiate signature data wrapper with default values
-        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(250, 250);
+        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(200, 270);
         // initiate signer object
         String previewPath;
         String xmlPath;
@@ -352,20 +360,13 @@ public class SignatureServiceImpl implements SignatureService {
     public FileDescriptionEntity saveImage(SaveImageRequest saveImageRequest) {
         try {
             String dataDirectoryPath = getFullDataPath(IMAGE_DATA_DIRECTORY.getPath());
-            String defaultImageName = "drawn signature.png";
-            String imagePath = String.format("%s%s%s", dataDirectoryPath, File.separator, defaultImageName);
-            File file = new File(imagePath);
-            if (file.exists()) {
-                String imageName = getFreeFileName(dataDirectoryPath, defaultImageName).toPath().getFileName().toString();
-                imagePath = String.format("%s%s%s", dataDirectoryPath, File.separator, imageName);
-                file = new File(imagePath);
-            }
+            File file = getFile(dataDirectoryPath, "");
             String encodedImage = saveImageRequest.getImage().replace("data:image/png;base64,", "");
             byte[] decodedImg = Base64.getDecoder().decode(encodedImage.getBytes(StandardCharsets.UTF_8));
             Files.write(file.toPath(), decodedImg);
 
             FileDescriptionEntity savedImage = new FileDescriptionEntity();
-            savedImage.setGuid(imagePath);
+            savedImage.setGuid(file.getAbsolutePath());
             // return loaded page object
             return savedImage;
         } catch (Exception ex) {
@@ -376,9 +377,6 @@ public class SignatureServiceImpl implements SignatureService {
 
     @Override
     public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {
-        String signatureType = deleteSignatureFileRequest.getSignatureType();
-        String relDirPath = SignatureDirectory.getPathFromSignatureType(signatureType);
-        SignatureLoader signatureLoader = new SignatureLoader(relDirPath, signatureType);
         signatureLoader.deleteSignatureFile(deleteSignatureFileRequest);
     }
 
@@ -400,9 +398,6 @@ public class SignatureServiceImpl implements SignatureService {
 
     @Override
     public SignaturePageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest) {
-        String signatureType = loadSignatureImageRequest.getSignatureType();
-        String relDirPath = SignatureDirectory.getPathFromSignatureType(signatureType);
-        SignatureLoader signatureLoader = new SignatureLoader(relDirPath, signatureType);
         return signatureLoader.loadImage(loadSignatureImageRequest);
     }
 
@@ -579,8 +574,7 @@ public class SignatureServiceImpl implements SignatureService {
         if (!sortedSignaturesData.codes.isEmpty()) {
             signOptical(documentType, sortedSignaturesData.codes, signsCollection);
         }
-        signDocument(documentGuid, signDocumentRequest.getPassword(), signsCollection);
-        return new SignedDocumentEntity();
+        return signDocument(documentGuid, signDocumentRequest.getPassword(), signsCollection);
     }
 
     /**
@@ -701,6 +695,8 @@ public class SignatureServiceImpl implements SignatureService {
      */
     private SignatureDataEntity getSignatureDataEntity(int height, int width) {
         SignatureDataEntity signatureDataEntity = new SignatureDataEntity();
+        signatureDataEntity.setHorizontalAlignment(HorizontalAlignment.Center);
+        signatureDataEntity.setVerticalAlignment(VerticalAlignment.Center);
         signatureDataEntity.setImageHeight(height);
         signatureDataEntity.setImageWidth(width);
         signatureDataEntity.setLeft(0);
@@ -720,37 +716,6 @@ public class SignatureServiceImpl implements SignatureService {
         // mimeType should now be something like "image/png" if the document is image
         boolean isImage = supportedImageFormats.contains(fileExtension);
         return isImage ? "image" : documentType;
-    }
-
-    /**
-     * Create file in previewPath and name imageGuid
-     * if the file is already exist, create new file with next number in name
-     * examples, 001, 002, 003, etc
-     *
-     * @param previewPath path to file folder
-     * @param imageGuid   file name
-     * @return created file
-     */
-    private File getFile(String previewPath, String imageGuid) {
-        File folder = new File(previewPath);
-        File[] listOfFiles = folder.listFiles();
-        if (!StringUtils.isEmpty(imageGuid)) {
-            return new File(imageGuid);
-        } else {
-            for (int i = 0; i <= listOfFiles.length; i++) {
-                int number = i + 1;
-                // set file name, for example 001
-                String fileName = String.format("%03d", number);
-                File file = new File(String.format("%s%s%s.png", previewPath, File.separator, fileName));
-                // check if file with such name already exists
-                if (file.exists()) {
-                    continue;
-                } else {
-                    return file;
-                }
-            }
-            return new File(String.format("%s%s001.png", previewPath, File.separator));
-        }
     }
 
     /**

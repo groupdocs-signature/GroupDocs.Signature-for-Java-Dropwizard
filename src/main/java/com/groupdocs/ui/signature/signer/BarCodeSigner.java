@@ -7,6 +7,8 @@ import com.groupdocs.signature.options.barcodesignature.*;
 import com.groupdocs.ui.signature.entity.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.entity.web.SignatureDataEntity;
 
+import java.awt.*;
+
 /**
  * BarCodeSigner
  * Signs documents with the BarCode signature
@@ -52,6 +54,7 @@ public class BarCodeSigner extends Signer{
 
     private void fillProperties(BarcodeSignOptions signOptions) {
         signOptions.setEncodeType(BarcodeTypes.Code39Standard);
+        signOptions.setBackgroundColor(Color.WHITE);
         signOptions.setHorizontalAlignment(HorizontalAlignment.None);
         signOptions.setVerticalAlignment(VerticalAlignment.None);
         signOptions.setWidth(signatureData.getImageWidth());

@@ -33,17 +33,12 @@ import static com.groupdocs.ui.signature.util.directory.PathConstants.DATA_XML_F
  * @author Aspose Pty Ltd
  */
 public class SignatureLoader {
-    private final String signatureType;
-    private String path;
 
     /**
      * Constructor
      *
-     * @param path signatures root directory
      */
-    public SignatureLoader(String path, String signatureType) {
-        this.path = path;
-        this.signatureType = signatureType;
+    public SignatureLoader() {
     }
 
     /**
@@ -51,7 +46,7 @@ public class SignatureLoader {
      *
      * @return List<SignatureFileDescriptionEntity>
      */
-    public List<SignatureFileDescriptionEntity> loadImageSignatures() {
+    public List<SignatureFileDescriptionEntity> loadImageSignatures(String path) {
         File directory = new File(path);
         List<SignatureFileDescriptionEntity> fileList = new ArrayList<>();
         List<File> filesList = Arrays.asList(directory.listFiles());
@@ -77,11 +72,11 @@ public class SignatureLoader {
      *
      * @return List<SignatureFileDescriptionEntity>
      */
-    public List<SignatureFileDescriptionEntity> loadFiles() {
+    public List<SignatureFileDescriptionEntity> loadFiles(String path, String signatureType) {
         File directory = new File(path);
         List<File> filesList = Arrays.asList(directory.listFiles());
         try {
-            return getResultFileList(filesList, false);
+            return getResultFileList(path, signatureType, filesList, false);
         } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
@@ -95,9 +90,8 @@ public class SignatureLoader {
      * Load stamp signatures
      *
      * @return List<SignatureFileDescriptionEntity>
-     * @throws IOException
      */
-    public List<SignatureFileDescriptionEntity> loadSignatures() throws IOException {
+    public List<SignatureFileDescriptionEntity> loadSignatures(String path, String signatureType) {
         String imagesPath = path + DATA_PREVIEW_FOLDER;
         String xmlPath = path + DATA_XML_FOLDER;
         File images = new File(imagesPath);
@@ -113,7 +107,7 @@ public class SignatureLoader {
                         }
                     }
                 }
-                return getResultFileList(filesList, true);
+                return getResultFileList(path, signatureType, filesList, true);
             }
             return Collections.EMPTY_LIST;
         } catch (Exception ex) {
@@ -121,7 +115,7 @@ public class SignatureLoader {
         }
     }
 
-    private List<SignatureFileDescriptionEntity> getResultFileList(List<File> filesList, boolean withImage) throws IOException, JAXBException {
+    private List<SignatureFileDescriptionEntity> getResultFileList(String path, String signatureType, List<File> filesList, boolean withImage) throws IOException, JAXBException {
         List<SignatureFileDescriptionEntity> fileList = new ArrayList<>();
         // sort list of files and folders
         filesList = Ordering.from(FileDateComparator.instance).compound(FileNameComparator.instance).sortedCopy(filesList);

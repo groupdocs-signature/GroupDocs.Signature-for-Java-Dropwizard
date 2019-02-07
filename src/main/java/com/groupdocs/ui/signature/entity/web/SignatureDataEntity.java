@@ -1,12 +1,16 @@
 package com.groupdocs.ui.signature.entity.web;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.groupdocs.signature.domain.enums.HorizontalAlignment;
+import com.groupdocs.signature.domain.enums.VerticalAlignment;
+
 /**
  * SignatureDataEntity
  *
  * @author Aspose Pty Ltd
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SignatureDataEntity {
-    private int id;
     private String reason;
     private String  contact;
     private String  address;
@@ -23,6 +27,8 @@ public class SignatureDataEntity {
     private int imageHeight;
     private int angle;
     private Boolean deleted;
+    private int horizontalAlignment = HorizontalAlignment.None;
+    private int verticalAlignment = VerticalAlignment.None;
 
     public int getPageNumber() {
         return pageNumber;
@@ -152,11 +158,19 @@ public class SignatureDataEntity {
         this.deleted = deleted;
     }
 
-    public int getId() {
-        return id;
+    public int getHorizontalAlignment() {
+        return horizontalAlignment;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setHorizontalAlignment(int horizontalAlignment) {
+        this.horizontalAlignment = horizontalAlignment;
+    }
+
+    public int getVerticalAlignment() {
+        return verticalAlignment;
+    }
+
+    public void setVerticalAlignment(int verticalAlignment) {
+        this.verticalAlignment = verticalAlignment;
     }
 }

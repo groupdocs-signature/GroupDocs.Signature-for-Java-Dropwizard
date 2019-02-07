@@ -1,5 +1,7 @@
 package com.groupdocs.ui.signature.entity.xml;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name="TextXmlEntity", namespace="TextXmlEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TextXmlEntity extends XmlEntityWithImage {
     private String backgroundColor = "rgb(255,255,255)";
     private String fontColor = "rgb(0,0,0)";

@@ -1,5 +1,7 @@
 package com.groupdocs.ui.signature.entity.xml;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -11,6 +13,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @XmlRootElement(name="StampXmlEntity", namespace="StampXmlEntity")
 @XmlAccessorType(XmlAccessType.FIELD)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StampXmlEntity extends XmlEntity {
     private String textExpansion;
     private String font;
@@ -20,6 +23,10 @@ public class StampXmlEntity extends XmlEntity {
     private int radius;
     private int fontSize;
     private int textRepeat;
+    private int strokeWidth;
+    private Boolean bold;
+    private Boolean italic;
+    private Boolean underline;
 
     public String getTextExpansion() {
         return textExpansion;
@@ -84,4 +91,37 @@ public class StampXmlEntity extends XmlEntity {
     public void setTextRepeat(int textRepeat) {
         this.textRepeat = textRepeat;
     }
+
+    public int getStrokeWidth() {
+        return strokeWidth;
+    }
+
+    public void setStrokeWidth(int strokeWidth) {
+        this.strokeWidth = strokeWidth;
+    }
+
+    public Boolean getBold() {
+        return bold;
+    }
+
+    public void setBold(Boolean bold) {
+        this.bold = bold;
+    }
+
+    public Boolean getItalic() {
+        return italic;
+    }
+
+    public void setItalic(Boolean italic) {
+        this.italic = italic;
+    }
+
+    public Boolean getUnderline() {
+        return underline;
+    }
+
+    public void setUnderline(Boolean underline) {
+        this.underline = underline;
+    }
+
 }
