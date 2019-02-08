@@ -9,6 +9,8 @@ import com.groupdocs.ui.common.entity.web.request.LoadDocumentRequest;
 import com.groupdocs.ui.common.exception.TotalGroupDocsException;
 import com.groupdocs.ui.common.resources.Resources;
 import com.groupdocs.ui.signature.config.SignatureConfiguration;
+import com.groupdocs.ui.signature.service.SignService;
+import com.groupdocs.ui.signature.service.SignServiceImpl;
 import com.groupdocs.ui.signature.util.directory.SignatureDirectory;
 import com.groupdocs.ui.signature.entity.request.*;
 import com.groupdocs.ui.signature.entity.web.SignatureFileDescriptionEntity;
@@ -56,6 +58,7 @@ public class SignatureResources extends Resources {
     public static final String SIGNATURE_TYPE_PARAM = "signatureType";
 
     private SignatureService signatureService;
+    private SignService signService;
 
     /**
      * Constructor
@@ -66,6 +69,7 @@ public class SignatureResources extends Resources {
         super(globalConfiguration);
 
         signatureService = new SignatureServiceImpl(globalConfiguration);
+        signService = new SignServiceImpl(globalConfiguration);
     }
 
     /**
@@ -226,7 +230,7 @@ public class SignatureResources extends Resources {
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
     public SignedDocumentEntity sign(SignDocumentRequest signDocumentRequest){
-        return signatureService.sign(signDocumentRequest);
+        return signService.sign(signDocumentRequest);
     }
 
     /*

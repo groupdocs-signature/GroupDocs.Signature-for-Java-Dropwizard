@@ -99,20 +99,25 @@ public class SignatureLoader {
             if (images.listFiles() != null) {
                 List<File> imageFiles = Arrays.asList(images.listFiles());
                 List<File> xmlFiles = Arrays.asList(new File(xmlPath).listFiles());
-                List<File> filesList = new ArrayList<>();
-                for (File image : imageFiles) {
-                    for (File xmlFile : xmlFiles) {
-                        if (FilenameUtils.removeExtension(xmlFile.getName()).equals(FilenameUtils.removeExtension(image.getName()))) {
-                            filesList.add(image);
-                        }
-                    }
-                }
+                List<File> filesList = createFilesList(imageFiles, xmlFiles);
                 return getResultFileList(path, signatureType, filesList, true);
             }
             return Collections.EMPTY_LIST;
         } catch (Exception ex) {
             throw new TotalGroupDocsException(ex.getMessage(), ex);
         }
+    }
+
+    private List<File> createFilesList(List<File> imageFiles, List<File> xmlFiles) {
+        List<File> filesList = new ArrayList<>();
+        for (File image : imageFiles) {
+            for (File xmlFile : xmlFiles) {
+                if (FilenameUtils.removeExtension(xmlFile.getName()).equals(FilenameUtils.removeExtension(image.getName()))) {
+                    filesList.add(image);
+                }
+            }
+        }
+        return filesList;
     }
 
     private List<SignatureFileDescriptionEntity> getResultFileList(String path, String signatureType, List<File> filesList, boolean withImage) throws IOException, JAXBException {

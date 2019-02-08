@@ -95,11 +95,4 @@ public interface SignatureService {
      */
     SignaturePageEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest);
 
-    /**
-     * Sign document
-     *
-     * @param signDocumentRequest
-     * @return
-     */
-    SignedDocumentEntity sign(SignDocumentRequest signDocumentRequest);
 }
