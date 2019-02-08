@@ -43,13 +43,12 @@ public class Utils {
      * examples, 001, 002, 003, etc
      *
      * @param previewPath path to file folder
-     * @param imageGuid   file name
+     * @param imageGuid   path to file
      * @return created file
      */
-    public static File getFile(String previewPath, String imageGuid) {
-        String fileName = String.format("%s%s%s", previewPath, File.separator, imageGuid);
-        if (!StringUtils.isEmpty(imageGuid) && !new File(fileName).exists()) {
-            return new File(fileName);
+    public static File getFileWithUniqueName(String previewPath, String imageGuid) {
+        if (!StringUtils.isEmpty(imageGuid) && !new File(imageGuid).exists()) {
+            return new File(imageGuid);
         } else {
             File[] listOfFiles = new File(previewPath).listFiles();
             return createUniqueFile(previewPath, listOfFiles);

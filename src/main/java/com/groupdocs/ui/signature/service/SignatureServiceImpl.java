@@ -84,8 +84,7 @@ public class SignatureServiceImpl implements SignatureService {
             } else {
                 relDirPath = String.format("%s%s%s", rootDirectory, File.separator, relDirPath);
             }
-            List<SignatureFileDescriptionEntity> fileList = loadFiles(signatureType, relDirPath);
-            return fileList;
+            return loadFiles(signatureType, relDirPath);
         } catch (Exception ex) {
             logger.error("Exception occurred while getting file list", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
@@ -131,9 +130,8 @@ public class SignatureServiceImpl implements SignatureService {
             // get/set parameters
             String documentGuid = loadDocumentRequest.getGuid();
             String password = loadDocumentRequest.getPassword();
-            DocumentDescription documentDescription;
             // get document info container
-            documentDescription = signatureHandler.getDocumentDescription(documentGuid, password);
+            DocumentDescription documentDescription = signatureHandler.getDocumentDescription(documentGuid, password);
             List<PageDescriptionEntity> pagesDescription = new ArrayList<>();
             // get info about each document page
             boolean loadData = globalConfiguration.getSignature().getPreloadPageCount() == 0;
