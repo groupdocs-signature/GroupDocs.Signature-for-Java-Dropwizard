@@ -50,7 +50,7 @@ public abstract class Signer {
      * @throws NotSupportedException
      * @throws ParseException
      */
-    public abstract SignOptions signImage() throws NotSupportedException, ParseException;
+    public abstract SignOptions signImage() throws NotSupportedException;
 
     /**
      *

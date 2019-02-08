@@ -111,13 +111,17 @@ public class SignatureLoader {
     private List<File> createFilesList(List<File> imageFiles, List<File> xmlFiles) {
         List<File> filesList = new ArrayList<>();
         for (File image : imageFiles) {
-            for (File xmlFile : xmlFiles) {
-                if (FilenameUtils.removeExtension(xmlFile.getName()).equals(FilenameUtils.removeExtension(image.getName()))) {
-                    filesList.add(image);
-                }
-            }
+            findXmlFile(xmlFiles, filesList, image);
         }
         return filesList;
+    }
+
+    private void findXmlFile(List<File> xmlFiles, List<File> filesList, File image) {
+        for (File xmlFile : xmlFiles) {
+            if (FilenameUtils.removeExtension(xmlFile.getName()).equals(FilenameUtils.removeExtension(image.getName()))) {
+                filesList.add(image);
+            }
+        }
     }
 
     private List<SignatureFileDescriptionEntity> getResultFileList(String path, String signatureType, List<File> filesList, boolean withImage) throws IOException, JAXBException {

@@ -9,16 +9,13 @@ import com.groupdocs.ui.common.entity.web.request.LoadDocumentRequest;
 import com.groupdocs.ui.common.exception.TotalGroupDocsException;
 import com.groupdocs.ui.common.resources.Resources;
 import com.groupdocs.ui.signature.config.SignatureConfiguration;
-import com.groupdocs.ui.signature.service.SignService;
-import com.groupdocs.ui.signature.service.SignServiceImpl;
+import com.groupdocs.ui.signature.service.*;
 import com.groupdocs.ui.signature.util.directory.SignatureDirectory;
 import com.groupdocs.ui.signature.entity.request.*;
 import com.groupdocs.ui.signature.entity.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.entity.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.entity.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.entity.xml.TextXmlEntity;
-import com.groupdocs.ui.signature.service.SignatureService;
-import com.groupdocs.ui.signature.service.SignatureServiceImpl;
 import com.groupdocs.ui.signature.views.Signature;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -57,6 +54,7 @@ public class SignatureResources extends Resources {
 
     public static final String SIGNATURE_TYPE_PARAM = "signatureType";
 
+    private final SaveSignatureService saveSignatureService;
     private SignatureService signatureService;
     private SignService signService;
 
@@ -70,6 +68,7 @@ public class SignatureResources extends Resources {
 
         signatureService = new SignatureServiceImpl(globalConfiguration);
         signService = new SignServiceImpl(globalConfiguration);
+        saveSignatureService = new SaveSignatureServiceImpl(globalConfiguration);
     }
 
     /**
@@ -242,7 +241,7 @@ public class SignatureResources extends Resources {
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
     public FileDescriptionEntity saveImage(SaveImageRequest saveImageRequest) {
-        return signatureService.saveImage(saveImageRequest);
+        return saveSignatureService.saveImage(saveImageRequest);
     }
 
     /**
@@ -254,7 +253,7 @@ public class SignatureResources extends Resources {
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
     public FileDescriptionEntity saveStamp(SaveStampRequest saveStampRequest){
-        return signatureService.saveStamp(saveStampRequest);
+        return saveSignatureService.saveStamp(saveStampRequest);
     }
 
     /**
@@ -266,7 +265,7 @@ public class SignatureResources extends Resources {
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
     public OpticalXmlEntity saveOpticalCode(SaveOpticalCodeRequest saveOpticalCodeRequest){
-        return signatureService.saveOpticalCode(saveOpticalCodeRequest);
+        return saveSignatureService.saveOpticalCode(saveOpticalCodeRequest);
     }
 
     /**
@@ -278,7 +277,7 @@ public class SignatureResources extends Resources {
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
     public TextXmlEntity saveText(SaveTextRequest saveTextRequest){
-        return signatureService.saveText(saveTextRequest);
+        return saveSignatureService.saveText(saveTextRequest);
     }
 
 }

@@ -1,16 +1,14 @@
 package com.groupdocs.ui.signature.service;
 
-import com.groupdocs.ui.common.entity.web.FileDescriptionEntity;
 import com.groupdocs.ui.common.entity.web.LoadDocumentEntity;
 import com.groupdocs.ui.common.entity.web.PageDescriptionEntity;
 import com.groupdocs.ui.common.entity.web.request.LoadDocumentPageRequest;
 import com.groupdocs.ui.common.entity.web.request.LoadDocumentRequest;
-import com.groupdocs.ui.signature.entity.request.*;
+import com.groupdocs.ui.signature.entity.request.DeleteSignatureFileRequest;
+import com.groupdocs.ui.signature.entity.request.LoadSignatureImageRequest;
+import com.groupdocs.ui.signature.entity.request.SignatureFileTreeRequest;
 import com.groupdocs.ui.signature.entity.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.entity.web.SignaturePageEntity;
-import com.groupdocs.ui.signature.entity.web.SignedDocumentEntity;
-import com.groupdocs.ui.signature.entity.xml.OpticalXmlEntity;
-import com.groupdocs.ui.signature.entity.xml.TextXmlEntity;
 
 import java.util.List;
 
@@ -42,36 +40,6 @@ public interface SignatureService {
      * @return loaded document page
      */
     PageDescriptionEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest);
-
-    /**
-     * Save stamp signature
-     *
-     * @param saveStampRequest save signature request data
-     * @return signature file description
-     */
-    FileDescriptionEntity saveStamp(SaveStampRequest saveStampRequest);
-
-    /**
-     * Save optical code signature
-     *
-     * @param saveOpticalCodeRequest save signature request data
-     * @return optical code signature
-     */
-    OpticalXmlEntity saveOpticalCode(SaveOpticalCodeRequest saveOpticalCodeRequest);
-
-    /**
-     * Save test signature
-     *
-     * @param saveTextRequest save signature request data
-     * @return text signature
-     */
-    TextXmlEntity saveText(SaveTextRequest saveTextRequest);
-
-    /**
-     * @param saveImageRequest save signature request data
-     * @return signature file description
-     */
-    FileDescriptionEntity saveImage(SaveImageRequest saveImageRequest);
 
     /**
      * Delete signature file from local storage
