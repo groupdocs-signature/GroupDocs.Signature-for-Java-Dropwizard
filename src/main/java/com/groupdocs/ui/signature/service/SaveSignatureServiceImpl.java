@@ -56,6 +56,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
         this.signatureConfiguration = globalConfiguration.getSignature();
         signatureHandler = SignatureHandlerFactory.createHandler(signatureConfiguration.getFilesDirectory(), signatureConfiguration.getDataDirectory());
     }
+
     /**
      * {@inheritDoc}
      */
@@ -95,7 +96,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
     public OpticalXmlEntity saveOpticalCode(SaveOpticalCodeRequest saveOpticalCodeRequest) {
         OpticalXmlEntity signatureData = saveOpticalCodeRequest.getProperties();
         // initiate signature data wrapper with default values
-        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(200, 270);
+        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(270, 200);
 
         // initiate signature options collection
         SignatureOptionsCollection collection = new SignatureOptionsCollection();
@@ -107,7 +108,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
         collection.add(signer.signImage());
 
         SignatureDirectory dataDirectory = QR_CODE.equals(saveOpticalCodeRequest.getSignatureType()) ? QRCODE_DATA_DIRECTORY : BARCODE_DATA_DIRECTORY;
-        String encodedImage = createAndSaveOpticalCode(signatureData, signatureDataEntity, dataDirectory, collection);
+        String encodedImage = createAndSaveOpticalCode(signatureData, dataDirectory, collection);
         signatureData.setEncodedImage(encodedImage);
         signatureData.setWidth(signatureDataEntity.getImageWidth());
         signatureData.setHeight(signatureDataEntity.getImageHeight());
@@ -118,25 +119,24 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
      * Create and save image with optical code
      *
      * @param signatureData
-     * @param signatureDataEntity
      * @param dataDirectory
      * @param collection
      * @return encoded image
      */
-    private String createAndSaveOpticalCode(OpticalXmlEntity signatureData, SignatureDataEntity signatureDataEntity, SignatureDirectory dataDirectory, SignatureOptionsCollection collection) {
+    private String createAndSaveOpticalCode(OpticalXmlEntity signatureData, SignatureDirectory dataDirectory, SignatureOptionsCollection collection) {
         // get preview path
         String previewPath = getFullDataPath(signatureConfiguration.getDataDirectory(), dataDirectory.getPreviewPath());
         // get xml file path
         String xmlPath = getFullDataPath(signatureConfiguration.getDataDirectory(), dataDirectory.getXMLPath());
         try {
             if (signatureData.getTemp()) {
-                BufferedImage bufImage = getBufferedImage(signatureDataEntity.getImageWidth(), signatureDataEntity.getImageHeight());
+                BufferedImage bufImage = getBufferedImage(200, 200);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
                 ImageIO.write(bufImage, PNG, os);
                 InputStream is = new ByteArrayInputStream(os.toByteArray());
                 return signWithImageToStream(collection, is);
             } else {
-                File file = writeImageFile(signatureData.getImageGuid(), signatureDataEntity, previewPath);
+                File file = writeImageFile(signatureData.getImageGuid(), previewPath, 200, 200);
                 String fileName = FilenameUtils.removeExtension(file.getName());
                 // Save data to xml file
                 new XMLReaderWriter<OpticalXmlEntity>().write(String.format("%s%s%s.xml", xmlPath, File.separator, fileName), signatureData);
@@ -158,7 +158,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
         TextXmlEntity signatureData = saveTextRequest.getProperties();
         // initiate signature data wrapper with default values
         SignatureDataEntity signatureDataEntity = getSignatureDataEntity(signatureData.getWidth(), signatureData.getHeight());
-        File file = writeImageFile(signatureData.getImageGuid(), signatureDataEntity, previewPath);
+        File file = writeImageFile(signatureData.getImageGuid(), previewPath, signatureDataEntity.getImageWidth(), signatureDataEntity.getImageHeight());
         try {
             String fileName = FilenameUtils.removeExtension(file.getName());
             // Save data to xml file
@@ -204,14 +204,13 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
      * Write image to file
      *
      * @param imageGuid      image file guid if it exists
-     * @param signaturesData signature
      * @param previewPath    path to file
      * @return
      */
-    private File writeImageFile(String imageGuid, SignatureDataEntity signaturesData, String previewPath) {
+    private File writeImageFile(String imageGuid, String previewPath, int width, int height) {
         File file = getFileWithUniqueName(previewPath, imageGuid);
         try {
-            BufferedImage bufImage = getBufferedImage(signaturesData.getImageWidth(), signaturesData.getImageHeight());
+            BufferedImage bufImage = getBufferedImage(width, height);
             // save BufferedImage to file
             ImageIO.write(bufImage, PNG, file);
         } catch (Exception ex) {
@@ -283,11 +282,11 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
     /**
      * Get filled signature data
      *
-     * @param height
      * @param width
+     * @param height
      * @return
      */
-    private SignatureDataEntity getSignatureDataEntity(int height, int width) {
+    private SignatureDataEntity getSignatureDataEntity(int width, int height) {
         SignatureDataEntity signatureDataEntity = new SignatureDataEntity();
         signatureDataEntity.setHorizontalAlignment(HorizontalAlignment.Center);
         signatureDataEntity.setVerticalAlignment(VerticalAlignment.Center);
