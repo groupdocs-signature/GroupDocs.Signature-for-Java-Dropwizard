@@ -108,10 +108,12 @@ public class SignatureServiceImpl implements SignatureService {
             case HAND:
                 fileList = signatureLoader.loadImageSignatures(relDirPath);
                 break;
+            case TEXT:
+                fileList = signatureLoader.loadTextSignatures(relDirPath, signatureConfiguration.getDataDirectory());
+                break;
             case STAMP:
             case QR_CODE:
             case BAR_CODE:
-            case TEXT:
                 fileList = signatureLoader.loadSignatures(relDirPath, signatureType);
                 break;
             default:

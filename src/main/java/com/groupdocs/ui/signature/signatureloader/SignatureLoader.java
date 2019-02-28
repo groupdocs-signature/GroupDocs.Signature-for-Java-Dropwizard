@@ -87,6 +87,23 @@ public class SignatureLoader {
     }
 
     /**
+     * load text signatures
+     *
+     * @param currentPath
+     * @param dataPath
+     * @return
+     */
+    public List<SignatureFileDescriptionEntity> loadTextSignatures(String currentPath, String dataPath) {
+        String xmlPath = currentPath + DATA_XML_FOLDER;
+        try {
+            List<File> filesList = Arrays.asList(new File(xmlPath).listFiles());
+            return getResultFileList(dataPath, TEXT, filesList, false);
+        } catch (Exception ex) {
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
+    }
+
+    /**
      * Load stamp signatures
      *
      * @return List<SignatureFileDescriptionEntity>
@@ -133,7 +150,7 @@ public class SignatureLoader {
             if (checkFile(path, file)) {
                 SignatureFileDescriptionEntity fileDescription = getSignatureFileDescriptionEntity(file, withImage);
                 String fileName = file.getAbsolutePath().replace(DATA_PREVIEW_FOLDER, DATA_XML_FOLDER).replace(FilenameUtils.getExtension(file.getName()), "xml");
-                fileDescription.setText(getQrBarCodeText(fileName, signatureType));
+                fillProperties(fileDescription, fileName, signatureType);
                 // add object to array list
                 fileList.add(fileDescription);
             }
@@ -141,12 +158,15 @@ public class SignatureLoader {
         return fileList;
     }
 
-    private String getQrBarCodeText(String fileName, String signatureType) throws JAXBException {
+    private void fillProperties(SignatureFileDescriptionEntity fileDescription, String fileName, String signatureType) throws JAXBException {
         if (QR_CODE.equals(signatureType) || BAR_CODE.equals(signatureType)) {
             OpticalXmlEntity opticalCodeData = new XMLReaderWriter<OpticalXmlEntity>().read(fileName, OpticalXmlEntity.class);
-            return opticalCodeData.getText();
+            fileDescription.setText(opticalCodeData.getText());
+        } else if (TEXT.equals(signatureType)) {
+            TextXmlEntity textXmlEntity = new XMLReaderWriter<TextXmlEntity>().read(fileName, TextXmlEntity.class);
+            fileDescription.setText(textXmlEntity.getText());
+            fileDescription.setFontColor(textXmlEntity.getFontColor());
         }
-        return "";
     }
 
     public void deleteSignatureFile(DeleteSignatureFileRequest deleteSignatureFileRequest) {

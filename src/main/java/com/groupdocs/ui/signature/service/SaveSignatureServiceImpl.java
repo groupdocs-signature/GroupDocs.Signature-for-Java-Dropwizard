@@ -48,6 +48,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
     private static final Logger logger = LoggerFactory.getLogger(SaveSignatureServiceImpl.class);
 
     public static final String PNG = "png";
+    public static final String XML = "xml";
 
     private SignatureHandler signatureHandler;
     private SignatureConfiguration signatureConfiguration;
@@ -69,7 +70,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
             String encodedImage = saveStampRequest.getImage().replace("data:image/png;base64,", "");
             List<StampXmlEntity> stampData = saveStampRequest.getStampData();
 
-            File file = getFileWithUniqueName(previewPath, "");
+            File file = getFileWithUniqueName(previewPath, "", PNG);
             byte[] decodedImg = Base64.getDecoder().decode(encodedImage.getBytes(StandardCharsets.UTF_8));
             Files.write(file.toPath(), decodedImg);
             // stamp data to xml file saving
@@ -153,28 +154,18 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
      */
     @Override
     public TextXmlEntity saveText(SaveTextRequest saveTextRequest) {
-        String previewPath = getFullDataPath(signatureConfiguration.getDataDirectory(), TEXT_DATA_DIRECTORY.getPreviewPath());
         String xmlPath = getFullDataPath(signatureConfiguration.getDataDirectory(), TEXT_DATA_DIRECTORY.getXMLPath());
         TextXmlEntity signatureData = saveTextRequest.getProperties();
-        // initiate signature data wrapper with default values
-        SignatureDataEntity signatureDataEntity = getSignatureDataEntity(signatureData.getWidth(), signatureData.getHeight());
-        File file = writeImageFile(signatureData.getImageGuid(), previewPath, signatureDataEntity.getImageWidth(), signatureDataEntity.getImageHeight());
         try {
-            String fileName = FilenameUtils.removeExtension(file.getName());
+            File file = getFileWithUniqueName(xmlPath, signatureData.getImageGuid(), XML);
             // Save data to xml file
-            new XMLReaderWriter<TextXmlEntity>().write(String.format("%s%s%s.xml", xmlPath, File.separator, fileName), signatureData);
+            String fileName = String.format("%s%s%s.xml", xmlPath, File.separator, FilenameUtils.removeExtension(file.getName()));
+            new XMLReaderWriter<TextXmlEntity>().write(fileName, signatureData);
+            signatureData.setImageGuid(fileName);
         } catch (JAXBException e) {
             logger.error("Exception occurred while saving text signature", e);
             throw new TotalGroupDocsException(e.getMessage(), e);
         }
-        // initiate signer object
-        TextSigner textSigner = new TextSigner(signatureData, signatureDataEntity);
-        // initiate signature options collection
-        SignatureOptionsCollection collection = new SignatureOptionsCollection();
-        // generate unique file names for preview image and xml file
-        collection.add(textSigner.signImage());
-        String encodedImage = signWithImageToFile(previewPath, signatureData, collection, file.toPath().toString());
-        signatureData.setEncodedImage(encodedImage);
         return signatureData;
     }
 
@@ -185,7 +176,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
     public FileDescriptionEntity saveImage(SaveImageRequest saveImageRequest) {
         try {
             String dataDirectoryPath = getFullDataPath(signatureConfiguration.getDataDirectory(), IMAGE_DATA_DIRECTORY.getPath());
-            File file = getFileWithUniqueName(dataDirectoryPath, "");
+            File file = getFileWithUniqueName(dataDirectoryPath, "", PNG);
             String encodedImage = saveImageRequest.getImage().replace("data:image/png;base64,", "");
             byte[] decodedImg = Base64.getDecoder().decode(encodedImage.getBytes(StandardCharsets.UTF_8));
             Files.write(file.toPath(), decodedImg);
@@ -208,7 +199,7 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
      * @return
      */
     private File writeImageFile(String imageGuid, String previewPath, int width, int height) {
-        File file = getFileWithUniqueName(previewPath, imageGuid);
+        File file = getFileWithUniqueName(previewPath, imageGuid, PNG);
         try {
             BufferedImage bufImage = getBufferedImage(width, height);
             // save BufferedImage to file
