@@ -20,7 +20,6 @@ import com.groupdocs.ui.signature.entity.xml.*;
 import com.groupdocs.ui.signature.signer.BarCodeSigner;
 import com.groupdocs.ui.signature.signer.QrCodeSigner;
 import com.groupdocs.ui.signature.signer.Signer;
-import com.groupdocs.ui.signature.signer.TextSigner;
 import com.groupdocs.ui.signature.util.XMLReaderWriter;
 import com.groupdocs.ui.signature.util.directory.SignatureDirectory;
 import org.apache.commons.io.FilenameUtils;
@@ -41,7 +40,6 @@ import static com.groupdocs.ui.common.util.Utils.getBufferedImage;
 import static com.groupdocs.ui.common.util.Utils.getFileWithUniqueName;
 import static com.groupdocs.ui.signature.service.SignatureHandlerFactory.getFullDataPath;
 import static com.groupdocs.ui.signature.util.SignatureType.QR_CODE;
-import static com.groupdocs.ui.signature.util.directory.PathConstants.OUTPUT_FOLDER;
 import static com.groupdocs.ui.signature.util.directory.SignatureDirectory.*;
 
 public class SaveSignatureServiceImpl implements SaveSignatureService {
@@ -256,8 +254,6 @@ public class SaveSignatureServiceImpl implements SaveSignatureService {
             signatureHandler.getSignatureConfig().setOutputPath(previewPath);
             // sign generated image with signature
             signatureHandler.sign(path, collection, saveOptions);
-            // set signed documents path back to correct path
-            signatureHandler.getSignatureConfig().setOutputPath(getFullDataPath(signatureConfiguration.getDataDirectory(), OUTPUT_FOLDER));
             // set data for response
             signatureData.setImageGuid(path);
             // get signature preview as Base64 String

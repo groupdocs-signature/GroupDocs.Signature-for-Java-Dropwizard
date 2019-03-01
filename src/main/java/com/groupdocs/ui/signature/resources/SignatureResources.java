@@ -9,21 +9,24 @@ import com.groupdocs.ui.common.entity.web.request.LoadDocumentRequest;
 import com.groupdocs.ui.common.exception.TotalGroupDocsException;
 import com.groupdocs.ui.common.resources.Resources;
 import com.groupdocs.ui.signature.config.SignatureConfiguration;
-import com.groupdocs.ui.signature.service.*;
-import com.groupdocs.ui.signature.util.directory.SignatureDirectory;
 import com.groupdocs.ui.signature.entity.request.*;
+import com.groupdocs.ui.signature.entity.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.entity.web.SignatureFileDescriptionEntity;
 import com.groupdocs.ui.signature.entity.web.SignedDocumentEntity;
 import com.groupdocs.ui.signature.entity.xml.OpticalXmlEntity;
 import com.groupdocs.ui.signature.entity.xml.TextXmlEntity;
+import com.groupdocs.ui.signature.service.*;
+import com.groupdocs.ui.signature.util.directory.SignatureDirectory;
 import com.groupdocs.ui.signature.views.Signature;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -37,7 +40,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.groupdocs.ui.signature.util.directory.PathConstants.OUTPUT_FOLDER;
 import static com.groupdocs.ui.signature.util.SignatureType.IMAGE;
 import static javax.ws.rs.core.MediaType.*;
 
@@ -124,16 +126,8 @@ public class SignatureResources extends Resources {
     @Path(value = "/downloadDocument")
     @Produces(APPLICATION_OCTET_STREAM)
     public void downloadDocument(@QueryParam("path") String documentGuid,
-                                 @QueryParam("signed") Boolean signed,
                                  @Context HttpServletResponse response) throws IOException {
-        // get document path
-        String fileName = FilenameUtils.getName(documentGuid);
-        // choose directory
-        SignatureConfiguration signatureConfiguration = globalConfiguration.getSignature();
-        String directory = signed ? signatureConfiguration.getDataDirectory() + OUTPUT_FOLDER : signatureConfiguration.getFilesDirectory();
-        String pathToDownload = String.format("%s%s%s", directory, File.separator, fileName);
-
-        downloadFile(response, pathToDownload);
+        downloadFile(response, documentGuid);
     }
 
     /**
@@ -230,6 +224,37 @@ public class SignatureResources extends Resources {
     @Consumes(APPLICATION_JSON)
     public SignedDocumentEntity sign(SignDocumentRequest signDocumentRequest){
         return signService.sign(signDocumentRequest);
+    }
+
+    /**
+     * Sign document with signatures and download result without saving
+     *
+     * @return signed document info
+     */
+    @POST
+    @Path(value = "/downloadSigned")
+    @Consumes(APPLICATION_JSON)
+    @Produces(APPLICATION_OCTET_STREAM)
+    public void downloadSigned(SignDocumentRequest signDocumentRequest, @Context HttpServletResponse response) {
+        List<SignatureDataEntity> signaturesData = signDocumentRequest.getSignaturesData();
+        if (signaturesData == null || signaturesData.isEmpty()) {
+            throw new IllegalArgumentException("Sign data is empty");
+        }
+
+        // get document path
+        String documentGuid = signDocumentRequest.getGuid();
+        String fileName = FilenameUtils.getName(documentGuid);
+        // set response content info
+
+        try (InputStream inputStream = signService.signByStream(signDocumentRequest);
+             ServletOutputStream outputStream = response.getOutputStream()) {
+            // download the document
+            long length = IOUtils.copyLarge(inputStream, outputStream);
+            addFileDownloadHeaders(response, fileName, length);
+        } catch (Exception ex) {
+            logger.error("Exception in downloading document", ex);
+            throw new TotalGroupDocsException(ex.getMessage(), ex);
+        }
     }
 
     /*
