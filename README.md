@@ -1,5 +1,5 @@
 # GroupDocs.Signature for Java Dropwizard Example
-###### version 1.10.7
+###### version 1.10.8
 
 [![Build Status](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard.svg?branch=master)](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1fe7f997911527bd80c6/maintainability)](https://codeclimate.com/github/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/maintainability)
@@ -72,10 +72,10 @@ Download [latest release](https://github.com/groupdocs-signature/GroupDocs.Signa
 **Note**: This method is **recommended** for running this sample behind firewall.
 
 ```bash
-curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/releases/download/1.10.7/release.tar.gz
+curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/releases/download/1.10.8/release.tar.gz
 tar -xvzf release.tar.gz
 cd release
-java -jar annotation-1.10.7.jar configuration.yaml
+java -jar annotation-1.10.8.jar configuration.yaml
 ## Open http://localhost:8080/signature/ in your favorite browser.
 ```
 
