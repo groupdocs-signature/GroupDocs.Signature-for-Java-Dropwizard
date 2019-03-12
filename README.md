@@ -85,7 +85,7 @@ Use [docker](https://www.docker.com/) image.
 ```bash
 mkdir DocumentSamples
 mkdir Licenses
-docker run -p 8080:8080 -v `pwd`/DocumentSamples:/home/groupdocs/app/DocumentSamples -v `pwd`/Licenses:/home/groupdocs/app/Licenses groupdocs/signature-for-java-dropwizard
+docker run -p 8080:8080 --env application.hostAddress=localhost -v `pwd`/DocumentSamples:/home/groupdocs/app/DocumentSamples -v `pwd`/Licenses:/home/groupdocs/app/Licenses groupdocs/signature-for-java-dropwizard
 ## Open http://localhost:8080/signature/ in your favorite browser.
 ```
 
