@@ -19,7 +19,7 @@ Thanks to powerful and flexible [GroupDocs.Signature for Java](https://products.
 
 
 ## Demo Video
-https://www.youtube.com/watch?v=pA98PkdXcN8
+https://youtu.be/MakhcqlV7iQ
 
 
 ## Features
