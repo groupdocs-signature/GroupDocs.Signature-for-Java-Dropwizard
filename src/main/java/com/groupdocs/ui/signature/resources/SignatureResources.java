@@ -9,6 +9,7 @@ import com.groupdocs.ui.common.entity.web.request.LoadDocumentRequest;
 import com.groupdocs.ui.common.exception.TotalGroupDocsException;
 import com.groupdocs.ui.common.resources.Resources;
 import com.groupdocs.ui.signature.config.SignatureConfiguration;
+import com.groupdocs.ui.signature.config.SignatureConfigurationModel;
 import com.groupdocs.ui.signature.entity.request.*;
 import com.groupdocs.ui.signature.entity.web.SignatureDataEntity;
 import com.groupdocs.ui.signature.entity.web.SignatureFileDescriptionEntity;
@@ -62,6 +63,7 @@ public class SignatureResources extends Resources {
 
     /**
      * Constructor
+     *
      * @param globalConfiguration global configuration object
      * @throws UnknownHostException
      */
@@ -75,12 +77,20 @@ public class SignatureResources extends Resources {
 
     /**
      * Get and set signature page
+     *
      * @return html view
      */
     @GET
-    public Signature getView(){
+    public Signature getView() {
         // initiate index page
         return new Signature(globalConfiguration, DEFAULT_CHARSET);
+    }
+
+    @GET
+    @Path(value = "/loadConfig")
+    @Produces(APPLICATION_JSON)
+    public SignatureConfigurationModel loadConfig() {
+        return SignatureConfigurationModel.createSignatureConfiguration(globalConfiguration.getSignature(), globalConfiguration.getCommon());
     }
 
     /**
@@ -96,30 +106,33 @@ public class SignatureResources extends Resources {
 
     /**
      * Get document description
+     *
      * @return document description
      */
     @POST
     @Path(value = "/loadDocumentDescription")
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
-    public LoadDocumentEntity loadDocumentDescription(LoadDocumentRequest loadDocumentRequest){
+    public LoadDocumentEntity loadDocumentDescription(LoadDocumentRequest loadDocumentRequest) {
         return signatureService.getDocumentDescription(loadDocumentRequest);
     }
 
     /**
      * Get document page
+     *
      * @return document page
      */
     @POST
     @Path(value = "/loadDocumentPage")
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
-    public PageDescriptionEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest){
+    public PageDescriptionEntity loadDocumentPage(LoadDocumentPageRequest loadDocumentPageRequest) {
         return signatureService.loadDocumentPage(loadDocumentPageRequest);
     }
 
     /**
      * Download document
+     *
      * @return document
      */
     @GET
@@ -132,6 +145,7 @@ public class SignatureResources extends Resources {
 
     /**
      * Upload document
+     *
      * @return uploaded document object (the object contains uploaded document guid)
      */
     @POST
@@ -153,7 +167,7 @@ public class SignatureResources extends Resources {
         // create response
         SignatureFileDescriptionEntity uploadedDocument = new SignatureFileDescriptionEntity();
         uploadedDocument.setGuid(filePath);
-        if(IMAGE.equals(signatureType)){
+        if (IMAGE.equals(signatureType)) {
             // get page image
             try {
                 byte[] bytes = Files.readAllBytes(new File(uploadedDocument.getGuid()).toPath());
@@ -204,25 +218,27 @@ public class SignatureResources extends Resources {
 
     /**
      * Get signature image stream - temporarlly workaround used until release of the GroupDocs.Signature 18.5, after release will be removed
+     *
      * @return signature image
      */
     @POST
     @Path(value = "/loadSignatureImage")
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
-    public PageDescriptionEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest){
+    public PageDescriptionEntity loadSignatureImage(LoadSignatureImageRequest loadSignatureImageRequest) {
         return signatureService.loadSignatureImage(loadSignatureImageRequest);
     }
 
     /**
      * Sign document with digital signature
+     *
      * @return signed document info
      */
     @POST
     @Path(value = "/sign")
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
-    public SignedDocumentEntity sign(SignDocumentRequest signDocumentRequest){
+    public SignedDocumentEntity sign(SignDocumentRequest signDocumentRequest) {
         return signService.sign(signDocumentRequest);
     }
 
@@ -271,37 +287,40 @@ public class SignatureResources extends Resources {
 
     /**
      * Save signature stamp
+     *
      * @return stamp
      */
     @POST
     @Path(value = "/saveStamp")
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
-    public FileDescriptionEntity saveStamp(SaveStampRequest saveStampRequest){
+    public FileDescriptionEntity saveStamp(SaveStampRequest saveStampRequest) {
         return saveSignatureService.saveStamp(saveStampRequest);
     }
 
     /**
      * Save Optical signature data
+     *
      * @return optical signature
      */
     @POST
     @Path(value = "/saveOpticalCode")
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
-    public OpticalXmlEntity saveOpticalCode(SaveOpticalCodeRequest saveOpticalCodeRequest){
+    public OpticalXmlEntity saveOpticalCode(SaveOpticalCodeRequest saveOpticalCodeRequest) {
         return saveSignatureService.saveOpticalCode(saveOpticalCodeRequest);
     }
 
     /**
      * Save signature text
+     *
      * @return text signature
      */
     @POST
     @Path(value = "/saveText")
     @Produces(APPLICATION_JSON)
     @Consumes(APPLICATION_JSON)
-    public TextXmlEntity saveText(SaveTextRequest saveTextRequest){
+    public TextXmlEntity saveText(SaveTextRequest saveTextRequest) {
         return saveSignatureService.saveText(saveTextRequest);
     }
 
