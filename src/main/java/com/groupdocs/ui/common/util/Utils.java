@@ -1,14 +1,22 @@
 package com.groupdocs.ui.common.util;
 
+import com.aspose.words.IncorrectPasswordException;
 import com.groupdocs.ui.common.exception.TotalGroupDocsException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 
+import static com.groupdocs.ui.common.exception.PasswordExceptions.INCORRECT_PASSWORD;
+import static com.groupdocs.ui.common.exception.PasswordExceptions.PASSWORD_REQUIRED;
+
 public class Utils {
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
+
     /**
      * Rename file if exist
      *
@@ -97,4 +105,25 @@ public class Utils {
             }
         }
     }
+
+    /**
+     * Get correct message for security exceptions
+     *
+     * @param password
+     * @param ex
+     * @return
+     */
+    public static String getExceptionMessage(String password, Exception ex) {
+        // Set exception message
+        String message = ex.getMessage();
+        if (StringUtils.isEmpty(password)) {
+            message = PASSWORD_REQUIRED;
+        } else if (!StringUtils.isEmpty(password)) {
+            message = INCORRECT_PASSWORD;
+        } else {
+            logger.error(message, ex);
+        }
+        return message;
+    }
+
 }
