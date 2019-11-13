@@ -149,7 +149,7 @@ public class SignatureServiceImpl implements SignatureService {
             // return document description
             return loadDocumentEntity;
         } catch (IncorrectPasswordException ex) {
-            throw new TotalGroupDocsException(getExceptionMessage(password, ex), ex);
+            throw new TotalGroupDocsException(getExceptionMessage(password), ex);
         } catch (Exception ex) {
             logger.error("Exception occurred while loading document description", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
