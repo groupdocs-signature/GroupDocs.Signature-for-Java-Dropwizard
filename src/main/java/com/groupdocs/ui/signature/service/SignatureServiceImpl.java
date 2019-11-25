@@ -1,7 +1,9 @@
 package com.groupdocs.ui.signature.service;
 
+import com.aspose.words.IncorrectPasswordException;
 import com.groupdocs.signature.domain.DocumentDescription;
 import com.groupdocs.signature.handler.SignatureHandler;
+import com.groupdocs.signature.internal.c.a.s.InvalidPasswordException;
 import com.groupdocs.signature.licensing.License;
 import com.groupdocs.ui.common.config.GlobalConfiguration;
 import com.groupdocs.ui.common.entity.web.LoadDocumentEntity;
@@ -27,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import static com.groupdocs.ui.common.util.Utils.getExceptionMessage;
 import static com.groupdocs.ui.signature.service.SignatureHandlerFactory.getFullDataPathStr;
 import static com.groupdocs.ui.signature.util.SignatureType.*;
 import static com.groupdocs.ui.signature.util.directory.PathConstants.DATA_FOLDER;
@@ -102,11 +105,11 @@ public class SignatureServiceImpl implements SignatureService {
         List<SignatureFileDescriptionEntity> fileList;
         switch (signatureType) {
             case DIGITAL:
-                fileList = signatureLoader.loadFiles(relDirPath, signatureType);
+                fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory(), signatureType);
                 break;
             case IMAGE:
             case HAND:
-                fileList = signatureLoader.loadImageSignatures(relDirPath);
+                fileList = signatureLoader.loadImageSignatures(relDirPath, signatureConfiguration.getDataDirectory());
                 break;
             case TEXT:
                 fileList = signatureLoader.loadTextSignatures(relDirPath, signatureConfiguration.getDataDirectory());
@@ -114,10 +117,10 @@ public class SignatureServiceImpl implements SignatureService {
             case STAMP:
             case QR_CODE:
             case BAR_CODE:
-                fileList = signatureLoader.loadSignatures(relDirPath, signatureType);
+                fileList = signatureLoader.loadSignatures(relDirPath, signatureConfiguration.getDataDirectory(), signatureType);
                 break;
             default:
-                fileList = signatureLoader.loadFiles(relDirPath, signatureType);
+                fileList = signatureLoader.loadFiles(relDirPath, signatureConfiguration.getDataDirectory(), signatureType);
                 break;
         }
         return fileList;
@@ -128,10 +131,10 @@ public class SignatureServiceImpl implements SignatureService {
      */
     @Override
     public LoadDocumentEntity getDocumentDescription(LoadDocumentRequest loadDocumentRequest) {
+        // get/set parameters
+        String documentGuid = loadDocumentRequest.getGuid();
+        String password = loadDocumentRequest.getPassword();
         try {
-            // get/set parameters
-            String documentGuid = loadDocumentRequest.getGuid();
-            String password = loadDocumentRequest.getPassword();
             // get document info container
             DocumentDescription documentDescription = signatureHandler.getDocumentDescription(documentGuid, password);
             List<PageDescriptionEntity> pagesDescription = new ArrayList<>();
@@ -146,6 +149,8 @@ public class SignatureServiceImpl implements SignatureService {
             loadDocumentEntity.setPages(pagesDescription);
             // return document description
             return loadDocumentEntity;
+        } catch (IncorrectPasswordException | InvalidPasswordException | com.groupdocs.signature.internal.c.a.pd.exceptions.InvalidPasswordException ex) {
+            throw new TotalGroupDocsException(getExceptionMessage(password), ex);
         } catch (Exception ex) {
             logger.error("Exception occurred while loading document description", ex);
             throw new TotalGroupDocsException(ex.getMessage(), ex);
