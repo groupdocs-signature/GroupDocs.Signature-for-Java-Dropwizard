@@ -116,7 +116,7 @@ Download [latest release](https://github.com/groupdocs-signature/GroupDocs.Signa
 curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/releases/download/1.10.21/release.tar.gz
 tar -xvzf release.tar.gz
 cd release
-java -jar annotation-1.10.21.jar configuration.yaml
+java -jar signature-1.10.21.jar configuration.yaml
 ## Open http://localhost:8080/signature/ in your favorite browser.
 ```
 
