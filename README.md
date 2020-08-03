@@ -1,6 +1,6 @@
 ![Create digital signature with GroupDocs.Signature](https://raw.githubusercontent.com/groupdocs-signature/groupdocs-signature.github.io/master/resources/image/banner.png "GroupDocs.Signature")
 # GroupDocs.Signature for Java Dropwizard Example
-###### version 1.10.22
+###### version 1.10.23
 
 [![Build Status](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard.svg?branch=master)](https://travis-ci.org/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard)
 [![Maintainability](https://api.codeclimate.com/v1/badges/1fe7f997911527bd80c6/maintainability)](https://codeclimate.com/github/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/maintainability)
@@ -113,10 +113,10 @@ Download [latest release](https://github.com/groupdocs-signature/GroupDocs.Signa
 **Note**: This method is **recommended** for running this sample behind firewall.
 
 ```bash
-curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/releases/download/1.10.22/release.tar.gz
+curl -J -L -o release.tar.gz https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/releases/download/1.10.23/release.tar.gz
 tar -xvzf release.tar.gz
 cd release
-java -jar signature-1.10.22.jar configuration.yaml
+java -jar signature-1.10.23.jar configuration.yaml
 ## Open http://localhost:8080/signature/ in your favorite browser.
 ```
 
