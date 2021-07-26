@@ -6,6 +6,8 @@
 [![Maintainability](https://api.codeclimate.com/v1/badges/1fe7f997911527bd80c6/maintainability)](https://codeclimate.com/github/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/maintainability)
 [![GitHub license](https://img.shields.io/github/license/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard.svg)](https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java-Dropwizard/blob/master/LICENSE)
 
+:warning: **This repository has moved to https://github.com/groupdocs-signature/GroupDocs.Signature-for-Java/tree/master/Demos/Dropwizard**
+
 ## System Requirements
 - Java 8 (JDK 1.8)
 - Maven 3
